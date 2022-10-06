@@ -1,20 +1,14 @@
-#!/usr/bin/env python
-# coding: utf-8
+Objective : Whether any relationship between the Predictors (age and ingredients) and the response variable (compressive strength) exists?
 
-# ## Objective : Whether any relationship between the Predictors (age and ingredients) and the response variable (compressive strength) exists?
-# 
-# **Given there is a relationship**
-# *How strong is it?
-# *Which predictors contribute to compressive strength?
-# *How large is the effect of each predictor on compressive strength?
-# *How accurately can I predict compressive strength?
-# *Is the relationship linear?
-# *Is there synergy/interaction among the predictors?
+    Given there is a relationship
+How strong is it?
+Which predictors contribute to compressive strength?
+How large is the effect of each predictor on compressive strength?
+How accurately can I predict compressive strength?
+Is the relationship linear?
+Is there synergy/interaction among the predictors?
 
-# #### 1. Import packages and Data
-
-# In[1]:
-
+1. Import packages and Data
 
 #import standard packages
 import pandas as pd
@@ -27,46 +21,24 @@ import warnings
 warnings.filterwarnings("ignore")
 
 
-# In[5]:
-
-
 #import data
 concrete_data = pd.read_csv('Concrete_Data_Yeh.csv')
 
 
-# #### 2. Initial EDA and Distributions
-
-# In[4]:
-
+# 2. Initial EDA and Distributions
 
 #look at formatting of entries
 concrete_data.head()
-
-
-# In[6]:
 
 
 #look at null count and dtype
 concrete_data.info()
 
 
-# In[7]:
-
-
 #look at distribution of data
 concrete_data.describe()
 
-
-# #### 3. Plotting distribution
-
-# In[ ]:
-
-
-
-
-
-# In[8]:
-
+# 3. Plotting distribution
 
 #look at data distribution
 for i in concrete_data.columns:
@@ -77,16 +49,10 @@ for i in concrete_data.columns:
     plt.show()
 
 
-# In[9]:
-
-
 #heat map using Pearson's coefficient
 plt.figure(figsize=(16, 6))
 sns.heatmap(concrete_data.corr(), annot=True)
 plt.title('Correlation Heatmap', fontdict={'fontsize':12}, pad=12);
-
-
-# In[10]:
 
 
 #create bins from compressive strength
@@ -96,15 +62,9 @@ bins = pd.qcut(concrete_data['csMPa'], q=4)
 concrete_data['bins']=bins
 
 
-# In[12]:
-
-
 #look at how target is distributed among variables
 sns.pairplot(concrete_data.loc[:, (concrete_data.columns != 'csMPa')], hue='bins')
 plt.show()
-
-
-# In[13]:
 
 
 #plot strongest linear correlation
@@ -112,14 +72,8 @@ sns.lmplot(x='cement', y='csMPa',data=concrete_data)
 plt.show()
 
 
-# In[14]:
-
-
 #drop bins from concrete data
 concrete_data = concrete_data.drop('bins', axis=1)
-
-
-# In[15]:
 
 
 #copy of variables and target
@@ -127,10 +81,7 @@ X = concrete_data.copy()
 y = X.pop('csMPa')
 
 
-# #### 4. Mutual Information
-
-# In[16]:
-
+# 4. Mutual Information
 
 #make a copy of features matrix for mutual information analysis
 X_mi = X.copy()
@@ -142,15 +93,8 @@ for colname in X_mi.select_dtypes("object"):
 #all discrete features have int dtypes
 discrete_features = X_mi.dtypes == object
 
-
-# In[17]:
-
-
 #some continuous variables also have int dtypes
 discrete_features[X_mi.columns] = False
-
-
-# In[18]:
 
 
 #use regression since the target variable is continuous
@@ -168,9 +112,6 @@ mi_scores = make_mi_scores(X_mi, y, discrete_features)
 mi_scores
 
 
-# In[19]:
-
-
 #define a function to plot mutual information scores
 def plot_mi_scores(scores):
     scores = scores.sort_values(ascending=True)
@@ -184,61 +125,10 @@ def plot_mi_scores(scores):
 plt.figure(dpi=100, figsize=(8, 5))
 plot_mi_scores(mi_scores)
 
-
-# In[20]:
-
-
 #plot top MI score predictors against target
 for i in ['water', 'age', 'cement']:
     fig, ax = plt.subplots(figsize=(12,4))
     sns.scatterplot(x=X_mi[i], y=y, ax=ax)
     plt.show()
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
 
 
